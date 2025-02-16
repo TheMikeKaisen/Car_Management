@@ -270,7 +270,7 @@ func (s Store) DeleteCar(ctx context.Context, id string) (models.Car, error) {
 	returnQuery := `
 		SELECT * from car WHERE id=$1;
 	`
-	err = tx.QueryRowContext(ctx, returnQuery, 
+	err = tx.QueryRowContext(ctx, returnQuery,
 		id,
 	).Scan(
 		&deletedCar.ID,
@@ -288,12 +288,10 @@ func (s Store) DeleteCar(ctx context.Context, id string) (models.Car, error) {
 		return models.Car{}, nil
 	}
 
-	
 	deleteQuery := `
 		DELETE FROM car
 		WHERE id=$1
 	`
-	
 
 	result, err := tx.ExecContext(ctx, deleteQuery,
 		id,
@@ -305,12 +303,12 @@ func (s Store) DeleteCar(ctx context.Context, id string) (models.Car, error) {
 	}
 
 	rowsAffected, err := result.RowsAffected()
-	if err != nil{
+	if err != nil {
 		fmt.Println("Row affect error!")
 		return models.Car{}, nil
 	}
 
-	if rowsAffected==0 {
+	if rowsAffected == 0 {
 		println("Id do not exist!")
 		return models.Car{}, errors.New("id do not exist")
 	}
