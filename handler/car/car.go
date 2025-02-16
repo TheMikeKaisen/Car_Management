@@ -11,37 +11,35 @@ import (
 	"github.com/gorilla/mux"
 )
 
-
 type CarHandler struct {
 	service service.CarServiceInterface
 }
 
-func NewCarHandler(service service.CarServiceInterface) *CarHandler{
+func NewCarHandler(service service.CarServiceInterface) *CarHandler {
 	return &CarHandler{service: service}
 }
 
-
-func (c *CarHandler) GetCarById(w http.ResponseWriter, r *http.Request){
+func (c *CarHandler) GetCarById(w http.ResponseWriter, r *http.Request) {
 
 	// take out the id params from url
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	// create a context 
+	// create a context
 	ctx := r.Context()
 
 	// call GetCarById service
-	car, getErr := c.service.GetCarById(ctx, id);
+	car, getErr := c.service.GetCarById(ctx, id)
 	if getErr != nil {
 		w.WriteHeader(500)
-		log.Println("Server Error: ", getErr);
+		log.Println("Server Error: ", getErr)
 		return
 	}
 
 	body, err := json.Marshal(car)
 	if err != nil {
 		w.WriteHeader(500)
-		log.Println("Server Error: ", err);
+		log.Println("Server Error: ", err)
 		return
 	}
 
@@ -52,11 +50,9 @@ func (c *CarHandler) GetCarById(w http.ResponseWriter, r *http.Request){
 	_, err = w.Write(body)
 	if err != nil {
 		w.WriteHeader(500)
-		log.Println("Server Error: ", err);
+		log.Println("Server Error: ", err)
 		return
 	}
-
-
 
 }
 
@@ -75,7 +71,7 @@ func (c *CarHandler) GetCarByBrand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, err :=json.Marshal(resp)
+	body, err := json.Marshal(resp)
 	if err != nil {
 		w.WriteHeader(500)
 		log.Println("Error", err)
@@ -84,14 +80,13 @@ func (c *CarHandler) GetCarByBrand(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
-	_, err= w.Write(body)
+	_, err = w.Write(body)
 	if err != nil {
 		w.WriteHeader(500)
 		log.Println("Error", err)
 		return
 	}
 
-	
 }
 
 func (c *CarHandler) CreateCar(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +100,7 @@ func (c *CarHandler) CreateCar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = json.Unmarshal(body, carBody)
+	err = json.Unmarshal(body, &carBody)
 	if err != nil {
 		w.WriteHeader(500)
 		log.Println("Error", err)
@@ -139,8 +134,7 @@ func (c *CarHandler) CreateCar(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (c *CarHandler) UpdateCar(w http.ResponseWriter, r *http.Request){
-
+func (c *CarHandler) UpdateCar(w http.ResponseWriter, r *http.Request) {
 
 	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -148,7 +142,6 @@ func (c *CarHandler) UpdateCar(w http.ResponseWriter, r *http.Request){
 		log.Println("Error Reading from request body: ", err)
 		return
 	}
-
 
 	var carBody models.CarRequest
 	err = json.Unmarshal(reqBody, &carBody)
@@ -185,9 +178,9 @@ func (c *CarHandler) UpdateCar(w http.ResponseWriter, r *http.Request){
 
 }
 
-func (c *CarHandler) DeleteCar(w http.ResponseWriter, r *http.Request){
+func (c *CarHandler) DeleteCar(w http.ResponseWriter, r *http.Request) {
 	// create a context
-	ctx:= r.Context()
+	ctx := r.Context()
 
 	// extract id
 	id := mux.Vars(r)["id"]
@@ -196,7 +189,7 @@ func (c *CarHandler) DeleteCar(w http.ResponseWriter, r *http.Request){
 	if err != nil {
 		w.WriteHeader(500)
 		log.Println("Error while Deleting the car: ", err)
-		return 
+		return
 	}
 
 	// marshal the response
@@ -204,7 +197,7 @@ func (c *CarHandler) DeleteCar(w http.ResponseWriter, r *http.Request){
 	if err != nil {
 		w.WriteHeader(500)
 		log.Println("Error while marshaling: ", err)
-		return 
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -213,8 +206,7 @@ func (c *CarHandler) DeleteCar(w http.ResponseWriter, r *http.Request){
 	if err != nil {
 		w.WriteHeader(500)
 		log.Println("error while writing to response: ", err)
-		return 
+		return
 	}
 
 }
-
